@@ -35,6 +35,8 @@
 		.lesson { border: 0; background: transparent; text-align: left; padding: 11px; display: flex; gap: 11px; align-items: center; color: #555956; border-radius: 9px; font-size: 13px; }
 		.lesson:hover, .lesson.selected { background: #e4e1d9; color: var(--ink); }
 		.lesson.selected { font-weight: 800; }
+		.lesson.completed .lesson-num { border-color: var(--green); background: var(--green); color: var(--ink); }
+		.lesson-status { margin-left: auto; color: var(--green); font-size: 10px; font-weight: 800; }
 		.lesson-num { width: 23px; height: 23px; display: grid; place-items: center; border: 1px solid #cbc7bc; border-radius: 50%; font: 11px 'DM Mono', monospace; flex: 0 0 auto; }
 		.selected .lesson-num { border-color: var(--blue); background: var(--blue); color: white; }
 		.side-footer { margin-top: 45px; padding: 16px 11px; border-top: 1px solid var(--line); color: var(--muted); font-size: 11px; line-height: 1.5; }
@@ -122,7 +124,7 @@
 		<main>
 			<header class="header">
 				<div><div class="eyebrow">интерактивный курс · 65 уроков</div><h1>Сайты начинаются<br>с <span>простого.</span></h1></div>
-				<div><div class="progress-box"><div class="progress-ring"><span id="progressText">42%</span></div>твой прогресс</div><p>Уроки кода и дизайна: от первой кнопки до цельного интерфейса.</p></div>
+				<div><div class="progress-box"><div class="progress-ring"><span id="progressText">0%</span></div>твой прогресс</div><p>Уроки кода и дизайна: от первой кнопки до цельного интерфейса.</p></div>
 			</header>
 			<div class="content-grid">
 				<article class="lesson-card">
@@ -333,6 +335,14 @@
 				}
 				$('checkFeedback').textContent = 'Правильно! Ошибок синтаксиса нет, задание выполнено.';
 				$('checkFeedback').classList.add('success');
+				completedLessons[`${track}-${lessonIndex}`] = true;
+				localStorage.setItem('coding-course-progress', JSON.stringify(completedLessons));
+				const currentLessonButton = document.querySelector(`.lesson[data-index="${lessonIndex}"]`);
+				if (currentLessonButton) {
+					currentLessonButton.classList.add('completed');
+					if (!currentLessonButton.querySelector('.lesson-status')) currentLessonButton.insertAdjacentHTML('beforeend', '<span class="lesson-status">пройден</span>');
+				}
+				updateProgress();
 			} catch (error) {
 				$('checkFeedback').textContent = 'Не удалось проверить код. Проверь скобки, кавычки и попробуй ещё раз.';
 				$('checkFeedback').classList.add('error');
@@ -345,7 +355,10 @@
 		}
 		let track = 'html', lessonIndex = 0;
 		const $ = id => document.getElementById(id);
-		function renderLessons(filter = '') { $('lessonList').innerHTML = tracks[track].map((lesson, index) => ({ lesson, index })).filter(x => x.lesson.title.toLowerCase().includes(filter.toLowerCase())).map(x => `<button class="lesson ${x.index === lessonIndex ? 'selected' : ''}" data-index="${x.index}"><span class="lesson-num">${String(x.index + 1).padStart(2, '0')}</span>${x.lesson.title}</button>`).join(''); document.querySelectorAll('.lesson').forEach(button => button.onclick = () => { lessonIndex = Number(button.dataset.index); render(); }); }
+		let completedLessons = JSON.parse(localStorage.getItem('coding-course-progress') || '{}');
+		function isCompleted(trackName, index) { return Boolean(completedLessons[`${trackName}-${index}`]); }
+		function updateProgress() { const totalLessons = Object.values(tracks).reduce((total, lessons) => total + lessons.length, 0); const completedCount = Object.keys(completedLessons).filter(key => completedLessons[key]).length; const percent = totalLessons ? Math.round(completedCount / totalLessons * 100) : 0; $('progressText').textContent = `${percent}%`; document.querySelector('.progress-ring').style.background = `conic-gradient(var(--blue) ${percent}%, #d9d7d0 0)`; }
+		function renderLessons(filter = '') { $('lessonList').innerHTML = tracks[track].map((lesson, index) => ({ lesson, index })).filter(x => x.lesson.title.toLowerCase().includes(filter.toLowerCase())).map(x => `<button class="lesson ${x.index === lessonIndex ? 'selected' : ''} ${isCompleted(track, x.index) ? 'completed' : ''}" data-index="${x.index}"><span class="lesson-num">${String(x.index + 1).padStart(2, '0')}</span>${x.lesson.title}${isCompleted(track, x.index) ? '<span class="lesson-status">пройден</span>' : ''}</button>`).join(''); document.querySelectorAll('.lesson').forEach(button => button.onclick = () => { lessonIndex = Number(button.dataset.index); render(); }); updateProgress(); }
 		function render() { const lesson = tracks[track][lessonIndex]; const totalLessons = tracks[track].length; const trackLabel = track === 'html' ? 'ОСНОВЫ' : track === 'css' ? 'СТИЛИЗАЦИЯ' : 'ИНТЕРФЕЙСЫ'; $('lessonTrack').textContent = `${track.toUpperCase()} · ${trackLabel}`; $('lessonCount').textContent = `УРОК ${String(lessonIndex + 1).padStart(2, '0')} / ${String(totalLessons).padStart(2, '0')}`; $('paneTitle').textContent = track === 'html' ? 'код · index.html' : track === 'css' ? 'код · style.css' : 'код · interface.css'; $('lessonTitle').textContent = lesson.title; $('lessonIntro').textContent = lesson.intro; $('codeBlock').innerHTML = lesson.code; $('resultBlock').innerHTML = lesson.result; $('concepts').innerHTML = lesson.concepts.map(item => `<div class="concept"><strong>${item[0]}</strong><span>${item[1]}</span></div>`).join(''); $('challengeText').textContent = lesson.challenge; $('answerInput').value = ''; $('hintText').textContent = ''; $('hintText').classList.remove('visible'); $('checkFeedback').textContent = ''; $('checkFeedback').classList.remove('error', 'success'); renderLessons($('search').value); }
 		document.querySelectorAll('[data-track]').forEach(button => button.onclick = () => { track = button.dataset.track; lessonIndex = 0; document.querySelectorAll('[data-track]').forEach(item => item.classList.toggle('active', item === button)); render(); });
 		$('search').oninput = event => renderLessons(event.target.value);
