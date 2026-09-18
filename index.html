@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="ru">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>кодинг — изучай HTML и CSS</title>
+	<style>
+		@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap');
+
+		:root {
+			--ink: #202325;
+			--muted: #777b79;
+			--paper: #f5f2eb;
+			--line: #ddd8cd;
+			--blue: #2658e8;
+			--orange: #f06b3d;
+			--green: #8eb85c;
+			--white: #fffdf8;
+		}
+
+		* { box-sizing: border-box; }
+		body { margin: 0; color: var(--ink); background: var(--paper); font-family: Manrope, sans-serif; }
+		button, input { font: inherit; }
+		button { cursor: pointer; }
+		.topline { height: 8px; background: var(--blue); }
+		.shell { display: grid; grid-template-columns: 260px minmax(0, 1fr); min-height: calc(100vh - 8px); }
+		aside { padding: 30px 22px; border-right: 1px solid var(--line); background: #eeece4; }
+		.brand { display: flex; gap: 10px; align-items: center; margin-bottom: 47px; font-weight: 800; letter-spacing: -.05em; font-size: 21px; }
+		.brand-mark { width: 31px; height: 31px; display: grid; place-items: center; background: var(--blue); color: white; font: 500 15px 'DM Mono', monospace; border-radius: 9px 3px 9px 3px; }
+		.side-label { color: var(--muted); text-transform: uppercase; font-size: 10px; font-weight: 800; letter-spacing: .14em; margin: 0 11px 13px; }
+		.mode-switch { display: grid; grid-template-columns: repeat(3, 1fr); background: #dedbd2; padding: 4px; border-radius: 10px; margin-bottom: 30px; }
+		.mode-switch button { border: 0; background: transparent; color: var(--muted); padding: 9px 4px; border-radius: 7px; font-size: 12px; font-weight: 800; }
+		.mode-switch button.active { background: var(--white); color: var(--blue); box-shadow: 0 2px 7px #0000000d; }
+		.lesson-list { display: grid; gap: 5px; }
+		.lesson { border: 0; background: transparent; text-align: left; padding: 11px; display: flex; gap: 11px; align-items: center; color: #555956; border-radius: 9px; font-size: 13px; }
+		.lesson:hover, .lesson.selected { background: #e4e1d9; color: var(--ink); }
+		.lesson.selected { font-weight: 800; }
+		.lesson-num { width: 23px; height: 23px; display: grid; place-items: center; border: 1px solid #cbc7bc; border-radius: 50%; font: 11px 'DM Mono', monospace; flex: 0 0 auto; }
+		.selected .lesson-num { border-color: var(--blue); background: var(--blue); color: white; }
+		.side-footer { margin-top: 45px; padding: 16px 11px; border-top: 1px solid var(--line); color: var(--muted); font-size: 11px; line-height: 1.5; }
+		.side-footer strong { display: block; color: var(--ink); font-size: 13px; margin-bottom: 4px; }
+		.site-credit { margin-top: 28px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font: 11px 'DM Mono', monospace; }
+		.site-credit strong { color: var(--ink); font-weight: 500; }
+		main { max-width: 1250px; width: 100%; padding: 34px 5vw 70px; margin: 0 auto; }
+		.header { display: flex; align-items: flex-start; justify-content: space-between; gap: 30px; margin-bottom: 50px; }
+		.eyebrow { color: var(--orange); text-transform: uppercase; letter-spacing: .16em; font-size: 10px; font-weight: 800; margin: 5px 0 15px; }
+		h1 { margin: 0; max-width: 600px; font-size: clamp(34px, 4vw, 58px); letter-spacing: -.07em; line-height: .98; }
+		h1 span { color: var(--blue); }
+		.header p { color: var(--muted); max-width: 330px; font-size: 13px; line-height: 1.65; margin: 6px 0 0; }
+		.progress-box { display: flex; align-items: center; gap: 11px; white-space: nowrap; font-size: 11px; color: var(--muted); }
+		.progress-ring { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; color: var(--blue); font: 10px 'DM Mono', monospace; background: conic-gradient(var(--blue) 42%, #d9d7d0 0); position: relative; }
+		.progress-ring::after { content: ''; position: absolute; inset: 5px; border-radius: 50%; background: var(--paper); }
+		.progress-ring span { position: relative; z-index: 1; }
+		.content-grid { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 22px; }
+		.lesson-card, .concept-card, .challenge { background: var(--white); border: 1px solid var(--line); border-radius: 14px; }
+		.lesson-card { padding: clamp(22px, 4vw, 43px); }
+		.lesson-meta { display: flex; justify-content: space-between; color: var(--muted); font: 11px 'DM Mono', monospace; margin-bottom: 29px; }
+		.lesson-card h2 { font-size: clamp(26px, 3vw, 39px); letter-spacing: -.06em; margin: 0 0 17px; }
+		.lesson-card .intro { color: #656965; max-width: 600px; line-height: 1.65; font-size: 14px; margin-bottom: 31px; }
+		.code-result { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid #2e3440; overflow: hidden; border-radius: 9px; margin-bottom: 25px; }
+		.code-pane { background: #20252d; color: #d7e1ee; min-height: 220px; }
+		.pane-head { color: #858e9b; border-bottom: 1px solid #363d48; padding: 11px 15px; font: 10px 'DM Mono', monospace; text-transform: uppercase; letter-spacing: .1em; }
+		pre { margin: 0; padding: 17px 18px; overflow-x: auto; font: 12px/1.8 'DM Mono', monospace; }
+		.tag { color: #ff8979; } .attr { color: #a8d17a; } .value { color: #e9c46a; } .selector { color: #71b6ff; } .property { color: #ffad70; }
+		.result-pane { background: white; color: #202325; }
+		.result-body { padding: 22px; font-size: 13px; min-height: 175px; }
+		.preview-window { overflow: hidden; border: 1px solid #d7dce2; border-radius: 8px; background: #fff; box-shadow: 0 8px 20px #20232512; }
+		.preview-top { display: flex; gap: 5px; padding: 7px 9px; background: #f0f2f4; }
+		.preview-top i { width: 6px; height: 6px; border-radius: 50%; background: #f06b3d; }
+		.preview-top i:nth-child(2) { background: #e9c46a; } .preview-top i:nth-child(3) { background: #8eb85c; }
+		.preview-photo { display: block; width: 100%; height: 90px; object-fit: cover; }
+		.preview-copy { padding: 12px; } .preview-copy strong { display: block; margin-bottom: 4px; } .preview-copy span { color: var(--muted); font-size: 10px; }
+		.demo-title { font-size: 25px; font-weight: 800; letter-spacing: -.05em; margin: 0 0 9px; }
+		.demo-button { border: 0; background: var(--blue); color: white; padding: 9px 14px; border-radius: 5px; font-size: 11px; }
+		.lesson-footer { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+		.tip { color: var(--muted); font-size: 11px; }
+		.tip b { color: var(--orange); }
+		.next-btn { border: 0; background: var(--ink); color: white; padding: 12px 17px; border-radius: 6px; font-size: 12px; font-weight: 800; }
+		.next-btn:hover { background: var(--blue); }
+		.right-col { display: grid; align-content: start; gap: 17px; }
+		.concept-card { padding: 22px; }
+		.concept-card h3, .challenge h3 { margin: 0 0 17px; font-size: 14px; letter-spacing: -.02em; }
+		.concept { border-top: 1px solid var(--line); padding: 13px 0; }
+		.concept:first-of-type { border-top: 0; padding-top: 0; }
+		.concept strong { display: block; font: 13px 'DM Mono', monospace; color: var(--blue); margin-bottom: 4px; }
+		.concept span { color: var(--muted); font-size: 11px; line-height: 1.5; }
+		.challenge { padding: 22px; background: var(--ink); color: white; }
+		.challenge h3 { color: white; }
+		.challenge p { color: #afb4b0; font-size: 12px; line-height: 1.55; margin: 0 0 15px; }
+		.challenge code { display: block; border: 1px solid #515652; color: #c2df9d; padding: 10px; font: 11px 'DM Mono', monospace; margin-bottom: 15px; }
+		.answer-label { display: block; color: #afb4b0; font-size: 10px; text-transform: uppercase; letter-spacing: .1em; margin-bottom: 7px; }
+		.answer-input { display: block; width: 100%; min-height: 116px; resize: vertical; padding: 11px; border: 1px solid #515652; border-radius: 5px; background: #292e32; color: #d8e9c0; outline: 0; font: 11px/1.55 'DM Mono', monospace; }
+		.answer-input:focus { border-color: var(--green); }
+		.check-btn { width: 100%; margin-top: 9px; border: 0; border-radius: 5px; padding: 10px; background: var(--blue); color: white; font-size: 11px; font-weight: 800; }
+		.check-btn:hover { background: #4772ed; }
+		.help-btn { width: 100%; margin-top: 8px; border: 1px solid #68706a; border-radius: 5px; padding: 9px; background: transparent; color: #d8e9c0; font-size: 11px; }
+		.help-btn:hover { border-color: var(--green); color: white; }
+		.hint-text { display: none; margin: 9px 0 0; padding: 9px; background: #292e32; color: #c7d5c3; font-size: 11px; line-height: 1.45; }
+		.hint-text.visible { display: block; }
+		.check-feedback { min-height: 18px; margin: 10px 0 0; color: #c7d5c3; font-size: 11px; line-height: 1.45; }
+		.check-feedback.error { color: #ffad96; }
+		.check-feedback.success { color: #b9df8d; }
+		.task-note { margin-bottom: 15px; padding: 10px; border: 1px dashed #68706a; color: #c7d5c3; font-size: 11px; line-height: 1.45; }
+		.done-btn { width: 100%; border: 1px solid #68706a; background: transparent; color: white; border-radius: 5px; padding: 9px; font-size: 11px; }
+		.done-btn:hover, .done-btn.done { background: var(--green); border-color: var(--green); color: var(--ink); }
+		.search { width: 100%; padding: 10px 11px; border: 1px solid var(--line); border-radius: 7px; background: var(--paper); color: var(--ink); font-size: 11px; margin-bottom: 16px; outline: 0; }
+		@media (max-width: 850px) { .shell { display: block; } aside { border-right: 0; border-bottom: 1px solid var(--line); padding: 18px; } .brand { margin-bottom: 20px; } .side-label, .side-footer { display: none; } .mode-switch { max-width: 250px; margin-bottom: 15px; } .lesson-list { display: flex; overflow-x: auto; padding-bottom: 3px; } .lesson { min-width: max-content; } main { padding: 28px 18px 50px; } .header { display: block; margin-bottom: 32px; } .header p { margin-top: 18px; } .progress-box { margin-top: 18px; } }
+		@media (max-width: 650px) { .content-grid { grid-template-columns: 1fr; } .code-result { grid-template-columns: 1fr; } .code-pane { min-height: 0; } .lesson-footer { align-items: flex-start; flex-direction: column; } .next-btn { width: 100%; } }
+	</style>
+</head>
+<body>
+	<div class="topline"></div>
+	<div class="shell">
+		<aside>
+			<div class="brand"><div class="brand-mark">&lt;/&gt;</div> кодинг</div>
+			<p class="side-label">выбери трек</p>
+			<div class="mode-switch"><button class="active" data-track="html">HTML</button><button data-track="css">CSS</button><button data-track="gui">GUI</button></div>
+			<input class="search" id="search" type="search" placeholder="Найти урок..." aria-label="Найти урок">
+			<div class="lesson-list" id="lessonList"></div>
+			<div class="side-footer"><strong>Твоя цель</strong>Научиться собирать сайты с нуля и понимать каждую строку.</div>
+		</aside>
+		<main>
+			<header class="header">
+				<div><div class="eyebrow">интерактивный курс · 65 уроков</div><h1>Сайты начинаются<br>с <span>простого.</span></h1></div>
+				<div><div class="progress-box"><div class="progress-ring"><span id="progressText">42%</span></div>твой прогресс</div><p>Уроки кода и дизайна: от первой кнопки до цельного интерфейса.</p></div>
+			</header>
+			<div class="content-grid">
+				<article class="lesson-card">
+					<div class="lesson-meta"><span id="lessonTrack">HTML · ОСНОВЫ</span><span id="lessonCount">УРОК 01 / 04</span></div>
+					<h2 id="lessonTitle">Строим каркас страницы</h2>
+					<p class="intro" id="lessonIntro">HTML — это скелет сайта. Он говорит браузеру, где заголовок, текст, картинка или кнопка. Начнём с самых важных тегов.</p>
+					<div class="code-result">
+						<div class="code-pane"><div class="pane-head" id="paneTitle">код · index.html</div><pre id="codeBlock"></pre></div>
+						<div class="result-pane"><div class="pane-head">результат в браузере</div><div class="result-body" id="resultBlock"></div></div>
+					</div>
+					<div class="lesson-footer"><div class="tip"><b>Запомни:</b> тег обычно состоит из открывающей и закрывающей части.</div><button class="next-btn" id="nextBtn">Следующий урок →</button></div>
+				</article>
+				<div class="right-col">
+					<section class="concept-card"><h3>Ключевые понятия</h3><div id="concepts"></div></section>
+					<section class="challenge"><h3>Задание: напиши код</h3><p id="challengeText">Создай заголовок второго уровня с текстом «Мой первый сайт».</p><div class="task-note">Не копируй пример. Собери похожий результат сам, используя то, что только что выучил.</div><label class="answer-label" for="answerInput">Твой код</label><textarea class="answer-input" id="answerInput" spellcheck="false" placeholder="Напиши решение здесь..."></textarea><button class="check-btn" id="checkBtn">Проверить код</button><button class="help-btn" id="helpBtn">Показать подсказку</button><p class="hint-text" id="hintText"></p><p class="check-feedback" id="checkFeedback" aria-live="polite"></p></section>
+				</div>
+			</div>
+			<div class="site-credit"><strong>by @KBACE4EK</strong> · учись и создавай</div>
+		</main>
+	</div>
+	<script>
+		const tracks = {
+			html: [
+				{ title: 'Каркас страницы', intro: 'HTML — это скелет сайта. Он говорит браузеру, где заголовок, текст, картинка или кнопка. Начнём с самых важных тегов.', code: '<span class="tag">&lt;h1&gt;</span>Привет, мир!<span class="tag">&lt;/h1&gt;</span>\n<span class="tag">&lt;p&gt;</span>Это мой первый сайт.<span class="tag">&lt;/p&gt;</span>\n<span class="tag">&lt;button&gt;</span>Нажми меня<span class="tag">&lt;/button&gt;</span>', result: '<div class="demo-title">Привет, мир!</div><p>Это мой первый сайт.</p><button class="demo-button">Нажми меня</button>', concepts: [['&lt;h1&gt;', 'Главный заголовок страницы'], ['&lt;p&gt;', 'Обычный абзац текста'], ['&lt;button&gt;', 'Интерактивная кнопка']], challenge: 'Создай заголовок второго уровня с текстом «Мой первый сайт».', challengeCode: '&lt;h2&gt;Мой первый сайт&lt;/h2&gt;' },
+				{ title: 'Ссылки и изображения', intro: 'Теги могут получать атрибуты — дополнительные настройки. Так ссылка узнаёт свой адрес, а картинка — путь к файлу.', code: '<span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="value">"https://example.com"</span><span class="tag">&gt;</span>Открыть сайт<span class="tag">&lt;/a&gt;</span>\n<span class="tag">&lt;img</span> <span class="attr">src</span>=<span class="value">"photo.jpg"</span> <span class="attr">alt</span>=<span class="value">"Фото"</span><span class="tag">&gt;</span>', result: '<p><a href="#" style="color:#2658e8;font-weight:700">Открыть сайт →</a></p><div style="background:#e7edf9;padding:22px;text-align:center;color:#2658e8;font-weight:700;border-radius:5px">изображение</div>', concepts: [['href', 'Адрес, куда ведёт ссылка'], ['src', 'Путь к файлу изображения'], ['alt', 'Описание картинки']], challenge: 'Добавь ссылку на любой сайт.', challengeCode: '&lt;a href="https://..."&gt;Моя ссылка&lt;/a&gt;' },
+				{ title: 'Списки и структура', intro: 'Списки помогают аккуратно организовать пункты. А семантические теги делают структуру понятной и людям, и поисковикам.', code: '<span class="tag">&lt;ul&gt;</span>\n  <span class="tag">&lt;li&gt;</span>HTML<span class="tag">&lt;/li&gt;</span>\n  <span class="tag">&lt;li&gt;</span>CSS<span class="tag">&lt;/li&gt;</span>\n<span class="tag">&lt;/ul&gt;</span>', result: '<ul><li>HTML</li><li>CSS</li><li>JavaScript</li></ul>', concepts: [['&lt;ul&gt;', 'Маркированный список'], ['&lt;li&gt;', 'Один пункт списка'], ['&lt;header&gt;', 'Верхняя часть страницы']], challenge: 'Собери список из трёх любимых фильмов.', challengeCode: '&lt;ul&gt; ... &lt;/ul&gt;' },
+				{ title: 'Формы и ввод', intro: 'Формы собирают информацию от пользователя. Поля ввода, подписи и кнопки складываются в один понятный интерфейс.', code: '<span class="tag">&lt;label</span> <span class="attr">for</span>=<span class="value">"email"</span><span class="tag">&gt;</span>Email<span class="tag">&lt;/label&gt;</span>\n<span class="tag">&lt;input</span> <span class="attr">id</span>=<span class="value">"email"</span> <span class="attr">type</span>=<span class="value">"email"</span><span class="tag">&gt;</span>', result: '<label style="display:block;margin-bottom:6px;font-weight:700">Email</label><input style="padding:9px;border:1px solid #ddd;border-radius:4px" placeholder="you@example.com">', concepts: [['&lt;form&gt;', 'Контейнер для формы'], ['&lt;input&gt;', 'Поле для ввода'], ['type', 'Тип поля: email, text и другие']], challenge: 'Добавь поле для имени пользователя.', challengeCode: '&lt;input type="text" placeholder="Имя"&gt;' },
+				{ title: 'Семантика страницы', intro: 'Семантические теги описывают смысл блоков: шапку, навигацию, основное содержимое и подвал. Так код легче читать.', code: '<span class="tag">&lt;header&gt;</span>Шапка сайта<span class="tag">&lt;/header&gt;</span>\n<span class="tag">&lt;main&gt;</span>Главное<span class="tag">&lt;/main&gt;</span>\n<span class="tag">&lt;footer&gt;</span>Подвал<span class="tag">&lt;/footer&gt;</span>', result: '<header style="background:#e7edf9;padding:13px;font-weight:700">Шапка сайта</header><main style="padding:15px 0">Главное содержимое</main><footer style="border-top:1px solid #ddd;padding-top:12px;color:#777">Подвал</footer>', concepts: [['&lt;header&gt;', 'Верхняя часть сайта'], ['&lt;main&gt;', 'Главное содержимое'], ['&lt;footer&gt;', 'Нижняя часть сайта']], challenge: 'Разметь свой сайт тегами header, main и footer.', challengeCode: '&lt;main&gt;Мой контент&lt;/main&gt;' },
+				{ title: 'Классы и id', intro: 'Класс позволяет дать одинаковый стиль нескольким элементам, а id отмечает один уникальный элемент на странице.', code: '<span class="tag">&lt;p</span> <span class="attr">class</span>=<span class="value">"note"</span><span class="tag">&gt;</span>Первый<span class="tag">&lt;/p&gt;</span>\n<span class="tag">&lt;p</span> <span class="attr">id</span>=<span class="value">"about"</span><span class="tag">&gt;</span>О нас<span class="tag">&lt;/p&gt;</span>', result: '<p style="background:#fff1ea;padding:10px;border-radius:4px">class="note" — общий стиль</p><p id="about">id="about" — уникальный элемент</p>', concepts: [['class', 'Имя для группы элементов'], ['id', 'Уникальный идентификатор'], ['.точка', 'Как обратиться к классу в CSS']], challenge: 'Дай карточке класс card.', challengeCode: '&lt;div class="card"&gt;...&lt;/div&gt;' },
+				{ title: 'Таблицы', intro: 'Таблицы подходят для структурированных данных: расписаний, прайс-листов и сравнений.', code: '<span class="tag">&lt;table&gt;</span>\n  <span class="tag">&lt;tr&gt;&lt;th&gt;</span>Имя<span class="tag">&lt;/th&gt;&lt;/tr&gt;</span>\n  <span class="tag">&lt;tr&gt;&lt;td&gt;</span>Аня<span class="tag">&lt;/td&gt;&lt;/tr&gt;</span>\n<span class="tag">&lt;/table&gt;</span>', result: '<table style="width:100%;border-collapse:collapse"><tr><th style="text-align:left;border-bottom:2px solid #2658e8;padding:8px">Имя</th><th style="text-align:left;border-bottom:2px solid #2658e8;padding:8px">Навык</th></tr><tr><td style="padding:8px;border-bottom:1px solid #ddd">Аня</td><td style="padding:8px;border-bottom:1px solid #ddd">HTML</td></tr></table>', concepts: [['&lt;table&gt;', 'Таблица'], ['&lt;tr&gt;', 'Строка таблицы'], ['&lt;td&gt;', 'Ячейка данных']], challenge: 'Создай таблицу из двух строк.', challengeCode: '&lt;table&gt;&lt;tr&gt;...&lt;/tr&gt;&lt;/table&gt;' },
+				{ title: 'Медиа на странице', intro: 'Изображения, видео и аудио делают страницу живой. Всегда добавляй alt к картинкам для доступности.', code: '<span class="tag">&lt;img</span> <span class="attr">src</span>=<span class="value">"cat.jpg"</span>\n     <span class="attr">alt</span>=<span class="value">"Кот на окне"</span><span class="tag">&gt;</span>\n<span class="tag">&lt;video</span> <span class="attr">controls</span><span class="tag">&gt;&lt;/video&gt;</span>', result: '<div style="background:#dfe8d5;padding:28px;text-align:center;font-size:26px">🖼️</div><p style="font-size:11px;color:#777">alt помогает понять содержание изображения.</p>', concepts: [['src', 'Источник медиафайла'], ['alt', 'Текстовое описание'], ['controls', 'Показывает управление видео']], challenge: 'Добавь картинку с понятным alt.', challengeCode: '&lt;img src="photo.jpg" alt="Описание"&gt;' },
+				{ title: 'Финал: собираем сайт', intro: 'Соедини всё вместе: семантику, заголовок, карточки, ссылку и форму. Маленький сайт уже настоящий проект.', code: '<span class="tag">&lt;header&gt;</span><span class="tag">&lt;h1&gt;</span>Моё портфолио<span class="tag">&lt;/h1&gt;&lt;/header&gt;</span>\n<span class="tag">&lt;main&gt;</span>Проекты и контакты<span class="tag">&lt;/main&gt;</span>\n<span class="tag">&lt;footer&gt;</span>2026<span class="tag">&lt;/footer&gt;</span>', result: '<header style="background:#2658e8;color:white;padding:14px;border-radius:5px 5px 0 0;font-weight:800">Моё портфолио</header><main style="padding:20px 0">Проекты и контакты</main><footer style="color:#777;font-size:11px">2026</footer>', concepts: [['Структура', 'Сначала HTML, потом CSS'], ['Контент', 'Покажи, что умеешь'], ['Практика', 'Сделай свой проект']], challenge: 'Создай собственную страницу из изученных тегов.', challengeCode: '&lt;h1&gt;Мой сайт&lt;/h1&gt;' },
+				{ title: 'Комментарии и порядок', intro: 'Комментарии помогают оставить заметку в коде. Отступы и понятный порядок тегов делают проект удобным для дальнейшей работы.', code: '<span class="tag">&lt;!--</span> Блок с проектами <span class="tag">--&gt;</span>\n<span class="tag">&lt;section&gt;</span>\n  <span class="tag">&lt;h2&gt;</span>Проекты<span class="tag">&lt;/h2&gt;</span>\n<span class="tag">&lt;/section&gt;</span>', result: '<div style="border-left:4px solid #8eb85c;padding:12px;background:#f5f2eb"><b>Проекты</b><p style="margin:6px 0 0;color:#777;font-size:11px">Комментарии остаются только в коде.</p></div>', concepts: [['&lt;!-- --&gt;', 'Комментарий в HTML'], ['&lt;section&gt;', 'Отдельный смысловой блок'], ['Отступы', 'Помогают читать вложенность']], challenge: 'Добавь комментарий перед блоком контактов.', challengeCode: '&lt;!-- Контакты --&gt;' },
+				{ title: 'Доступность', intro: 'Хороший сайт понятен всем. Используй alt, label, правильный порядок заголовков и понятный текст ссылок.', code: '<span class="tag">&lt;img</span> <span class="attr">alt</span>=<span class="value">"Команда проекта"</span><span class="tag">&gt;</span>\n<span class="tag">&lt;label</span> <span class="attr">for</span>=<span class="value">"name"</span><span class="tag">&gt;</span>Имя<span class="tag">&lt;/label&gt;</span>', result: '<div style="display:flex;gap:12px;align-items:center"><div style="background:#dfe8d5;padding:22px">👥</div><div><b>Команда проекта</b><p style="margin:5px 0;color:#777;font-size:11px">Изображение имеет описание.</p></div></div>', concepts: [['alt', 'Описание для скринридеров'], ['label', 'Подпись поля формы'], ['h1 → h2', 'Логичная иерархия заголовков']], challenge: 'Проверь, что у картинки есть alt.', challengeCode: '&lt;img src="team.jpg" alt="Команда"&gt;' },
+				{ title: 'Финальный HTML-проект', intro: 'Собери HTML-основу личной страницы: шапка, о себе, список навыков, проекты и контакты. CSS добавим следующим треком.', code: '<span class="tag">&lt;header&gt;</span><span class="tag">&lt;nav&gt;</span>Главная · Проекты<span class="tag">&lt;/nav&gt;&lt;/header&gt;</span>\n<span class="tag">&lt;main&gt;</span><span class="tag">&lt;section&gt;</span>Обо мне<span class="tag">&lt;/section&gt;&lt;/main&gt;</span>', result: '<header style="background:#202325;color:white;padding:12px">Главная · Проекты</header><main style="padding:16px 0"><h3 style="margin:0">Обо мне</h3><p style="color:#777">Мой первый проект</p></main>', concepts: [['Структура', 'Собираем страницу блоками'], ['Навигация', 'Помогает перемещаться по сайту'], ['Проект', 'Результат всей практики']], challenge: 'Сделай HTML-каркас своей страницы.', challengeCode: '&lt;header&gt;...&lt;/header&gt;\n&lt;main&gt;...&lt;/main&gt;' }
+			],
+			css: [
+				{ title: 'Цвет и шрифт', intro: 'CSS — это стиль сайта. С помощью правил мы выбираем цвет, размер и внешний вид элементов HTML.', code: '<span class="selector">h1</span> {\n  <span class="property">color</span>: <span class="value">#2658e8</span>;\n  <span class="property">font-size</span>: <span class="value">40px</span>;\n}', result: '<div class="demo-title" style="color:#2658e8;font-size:40px">Большой заголовок</div><p>Теперь он синий и заметный.</p>', concepts: [['color', 'Цвет текста элемента'], ['font-size', 'Размер шрифта'], ['font-weight', 'Толщина букв']], challenge: 'Сделай заголовок оранжевым.', challengeCode: 'h1 { color: orange; }' },
+				{ title: 'Отступы и рамки', intro: 'Отступы создают воздух вокруг контента, а рамки помогают выделить элементы. Это база аккуратного дизайна.', code: '<span class="selector">.card</span> {\n  <span class="property">padding</span>: <span class="value">20px</span>;\n  <span class="property">border</span>: <span class="value">1px solid #ddd</span>;\n  <span class="property">border-radius</span>: <span class="value">8px</span>;\n}', result: '<div style="padding:20px;border:1px solid #ddd;border-radius:8px;font-weight:700">Карточка с воздухом</div>', concepts: [['padding', 'Внутренний отступ'], ['margin', 'Внешний отступ'], ['border', 'Рамка вокруг элемента']], challenge: 'Добавь карточке внутренний отступ 16px.', challengeCode: '.card { padding: 16px; }' },
+				{ title: 'Flexbox', intro: 'Flexbox помогает удобно располагать элементы в ряд или колонку. Это один из главных инструментов современной вёрстки.', code: '<span class="selector">.menu</span> {\n  <span class="property">display</span>: <span class="value">flex</span>;\n  <span class="property">gap</span>: <span class="value">16px</span>;\n  <span class="property">align-items</span>: <span class="value">center</span>;\n}', result: '<div style="display:flex;gap:16px;align-items:center"><b>Главная</b><span>О нас</span><span>Контакты</span></div>', concepts: [['display: flex', 'Включает flex-раскладку'], ['gap', 'Расстояние между элементами'], ['justify-content', 'Выравнивание по главной оси']], challenge: 'Размести два блока рядом.', challengeCode: '.row { display: flex; gap: 12px; }' },
+				{ title: 'Адаптивность', intro: 'Адаптивный сайт хорошо выглядит на телефоне и компьютере. Media-запросы позволяют менять стили для разных экранов.', code: '<span class="selector">@media (max-width: 600px)</span> {\n  <span class="selector">h1</span> {\n    <span class="property">font-size</span>: <span class="value">28px</span>;\n  }\n}', result: '<div style="background:#f5f2eb;padding:14px;border-left:4px solid #8eb85c">Сайт подстраивается под экран пользователя.</div>', concepts: [['@media', 'Правило для разных экранов'], ['max-width', 'Максимальная ширина экрана'], ['width: 100%', 'Полная ширина родителя']], challenge: 'Уменьши заголовок на экранах до 600px.', challengeCode: '@media (max-width: 600px) { ... }' },
+				{ title: 'Селекторы CSS', intro: 'Селектор выбирает элементы, которые нужно стилизовать. Можно выбрать тег, класс, id или сразу несколько элементов.', code: '<span class="selector">p</span> { <span class="property">color</span>: <span class="value">#777</span>; }\n<span class="selector">.card</span> { <span class="property">padding</span>: <span class="value">16px</span>; }\n<span class="selector">#hero</span> { <span class="property">background</span>: <span class="value">#2658e8</span>; }', result: '<p style="color:#777">p — селектор тега</p><div style="padding:16px;background:#e7edf9;border-radius:5px">.card — селектор класса</div><p style="color:#2658e8;font-weight:700">#hero — селектор id</p>', concepts: [['p', 'Все абзацы'], ['.card', 'Элементы с классом card'], ['#hero', 'Элемент с уникальным id']], challenge: 'Выбери класс .button и задай ему цвет.', challengeCode: '.button { color: #2658e8; }' },
+				{ title: 'Блочная модель', intro: 'Каждый элемент состоит из контента, padding, border и margin. Понимание этой модели решает большую часть проблем с размерами.', code: '<span class="selector">.box</span> {\n  <span class="property">width</span>: <span class="value">200px</span>;\n  <span class="property">padding</span>: <span class="value">20px</span>;\n  <span class="property">box-sizing</span>: <span class="value">border-box</span>;\n}', result: '<div style="width:100%;padding:20px;border:4px solid #f06b3d;box-sizing:border-box;text-align:center">content + padding + border</div>', concepts: [['content', 'Содержимое элемента'], ['padding', 'Внутренний отступ'], ['margin', 'Расстояние снаружи']], challenge: 'Добавь box-sizing: border-box всем элементам.', challengeCode: '* { box-sizing: border-box; }' },
+				{ title: 'CSS Grid', intro: 'Grid создаёт сетку из строк и колонок. Он отлично подходит для галерей, карточек и сложных макетов.', code: '<span class="selector">.gallery</span> {\n  <span class="property">display</span>: <span class="value">grid</span>;\n  <span class="property">grid-template-columns</span>: <span class="value">repeat(3, 1fr)</span>;\n  <span class="property">gap</span>: <span class="value">12px</span>;\n}', result: '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px"><div style="background:#dfe8d5;height:45px"></div><div style="background:#e7edf9;height:45px"></div><div style="background:#fff1ea;height:45px"></div></div>', concepts: [['display: grid', 'Включает сетку'], ['1fr', 'Одна доля свободного места'], ['repeat()', 'Повторяет колонки']], challenge: 'Сделай сетку из двух колонок.', challengeCode: '.grid { grid-template-columns: repeat(2, 1fr); }' },
+				{ title: 'Позиционирование', intro: 'position управляет расположением элемента относительно страницы или родителя. Используй его для бейджей, меню и подсказок.', code: '<span class="selector">.badge</span> {\n  <span class="property">position</span>: <span class="value">absolute</span>;\n  <span class="property">top</span>: <span class="value">10px</span>;\n  <span class="property">right</span>: <span class="value">10px</span>;\n}', result: '<div style="position:relative;background:#f5f2eb;padding:25px">Карточка <b style="position:absolute;right:10px;top:10px;background:#f06b3d;color:white;padding:4px 7px;border-radius:3px;font-size:10px">NEW</b></div>', concepts: [['relative', 'Точка отсчёта для дочерних элементов'], ['absolute', 'Точное положение внутри родителя'], ['fixed', 'Фиксация относительно окна']], challenge: 'Поставь бейдж в правый верхний угол.', challengeCode: '.badge { position: absolute; top: 0; right: 0; }' },
+				{ title: 'Переходы и hover', intro: 'Псевдокласс :hover меняет стиль при наведении, а transition делает это изменение плавным и приятным.', code: '<span class="selector">.button</span> {\n  <span class="property">transition</span>: <span class="value">.2s</span>;\n}\n<span class="selector">.button:hover</span> {\n  <span class="property">transform</span>: <span class="value">translateY(-2px)</span>;\n}', result: '<button class="demo-button" style="transition:.2s" onmouseover="this.style.transform=\'translateY(-2px)\'" onmouseout="this.style.transform=\'none\'">Наведи на меня</button>', concepts: [[':hover', 'Состояние при наведении'], ['transition', 'Плавное изменение'], ['transform', 'Визуальное преобразование']], challenge: 'Добавь кнопке эффект при наведении.', challengeCode: '.button:hover { transform: scale(1.05); }' },
+				{ title: 'Переменные и тема', intro: 'CSS-переменные хранят цвета и размеры в одном месте. Меняешь значение один раз — обновляется весь сайт.', code: '<span class="selector">:root</span> {\n  <span class="property">--brand</span>: <span class="value">#2658e8</span>;\n}\n<span class="selector">.title</span> {\n  <span class="property">color</span>: <span class="value">var(--brand)</span>;\n}', result: '<div style="color:#2658e8;font-weight:800;font-size:24px">Один цвет для всей темы</div><p style="font-size:11px;color:#777">var(--brand) берёт значение из :root</p>', concepts: [[':root', 'Глобальное место для переменных'], ['--brand', 'Имя переменной'], ['var()', 'Использование переменной']], challenge: 'Создай переменную --accent для акцентного цвета.', challengeCode: ':root { --accent: orange; }' },
+				{ title: 'Финал: дизайн сайта', intro: 'Теперь собери цельный экран: выбери палитру, создай сетку, добавь адаптивность и оживи кнопки. Это уже дизайн-система.', code: '<span class="selector">:root</span> { <span class="property">--accent</span>: <span class="value">#2658e8</span>; }\n<span class="selector">.layout</span> { <span class="property">display</span>: <span class="value">grid</span>; <span class="property">gap</span>: <span class="value">24px</span>; }\n<span class="selector">button:hover</span> { <span class="property">opacity</span>: <span class="value">.8</span>; }', result: '<div style="display:grid;gap:10px"><div style="background:#2658e8;color:white;padding:14px;font-weight:800">Готовый экран</div><div style="display:flex;gap:8px"><span style="background:#f06b3d;color:white;padding:8px">цвет</span><span style="background:#8eb85c;padding:8px">сетка</span></div></div>', concepts: [['Сетка', 'Выстраивает композицию'], ['Цвет', 'Создаёт настроение'], ['Hover', 'Добавляет обратную связь']], challenge: 'Собери свой первый полноценный дизайн.', challengeCode: '.site { display: grid; gap: 24px; }' },
+				{ title: 'Тени и глубина', intro: 'box-shadow добавляет мягкую тень и помогает отделить карточку от фона. Используй её умеренно, чтобы интерфейс оставался чистым.', code: '<span class="selector">.card</span> {\n  <span class="property">box-shadow</span>: <span class="value">0 8px 24px #0002</span>;\n  <span class="property">border-radius</span>: <span class="value">12px</span>;\n}', result: '<div style="padding:28px;background:white;border-radius:12px;box-shadow:0 8px 24px #0002;font-weight:800">Карточка с глубиной</div>', concepts: [['box-shadow', 'Тень элемента'], ['blur', 'Размытие тени'], ['opacity', 'Прозрачность цвета']], challenge: 'Добавь карточке мягкую тень.', challengeCode: '.card { box-shadow: 0 6px 18px #0002; }' },
+				{ title: 'Типографика', intro: 'Шрифт, размер, высота строки и ширина текста влияют на то, насколько легко читать страницу.', code: '<span class="selector">.text</span> {\n  <span class="property">font-size</span>: <span class="value">16px</span>;\n  <span class="property">line-height</span>: <span class="value">1.6</span>;\n  <span class="property">max-width</span>: <span class="value">60ch</span>;\n}', result: '<p style="font-size:16px;line-height:1.6;max-width:35ch;margin:0">Хорошая типографика помогает читать текст легко и не уставать.</p>', concepts: [['font-family', 'Семейство шрифта'], ['line-height', 'Расстояние между строками'], ['max-width', 'Ограничение ширины текста']], challenge: 'Увеличь высоту строки абзаца до 1.7.', challengeCode: '.text { line-height: 1.7; }' },
+				{ title: 'Тёмная тема', intro: 'Сделай тему через CSS-переменные. Когда все цвета собраны в одном месте, менять настроение сайта становится просто.', code: '<span class="selector">:root</span> {\n  <span class="property">--bg</span>: <span class="value">#202325</span>;\n  <span class="property">--text</span>: <span class="value">#fffdf8</span>;\n}\n<span class="selector">body</span> { <span class="property">background</span>: <span class="value">var(--bg)</span>; }', result: '<div style="background:#202325;color:#fffdf8;padding:22px;border-radius:6px"><b>Тёмная тема</b><p style="color:#afb4b0;margin:6px 0 0">Цвета управляются переменными.</p></div>', concepts: [['--bg', 'Цвет фона'], ['--text', 'Цвет текста'], ['var()', 'Подставляет значение переменной']], challenge: 'Создай две переменные для тёмной темы.', challengeCode: ':root { --bg: #202325; --text: white; }' },
+			],
+			gui: []
+		};
+		function addExtraLesson(trackName, title, intro, code, challenge) {
+			const isFullDocument = code.trim().startsWith('<!doctype');
+			const fullCode = trackName === 'html' ? (isFullDocument ? code : `<!doctype html>\n<html lang="ru">\n<head>\n  <meta charset="UTF-8">\n  <meta name="viewport" content="width=device-width">\n  <title>${title}</title>\n</head>\n<body>\n  ${code.split('\n').join('\n  ')}\n</body>\n</html>`) : `:root {\n  --accent: #2658e8;\n  --surface: #fffdf8;\n}\n\n* { box-sizing: border-box; }\nbody {\n  margin: 0;\n  color: #202325;\n  background: var(--surface);\n  font-family: sans-serif;\n}\n\n${code}`;
+			const escapedCode = fullCode.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+			const photoUrl = trackName === 'html' ? 'https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=900&q=80' : 'https://images.unsplash.com/photo-1558655146-d09347e92766?auto=format&fit=crop&w=900&q=80';
+			const result = `<div class="preview-window"><div class="preview-top"><i></i><i></i><i></i></div><img class="preview-photo" src="${photoUrl}" alt="Пример оформления урока"><div class="preview-copy"><strong>${title}</strong><span>Так выглядит собранный блок на странице</span></div></div>`;
+			tracks[trackName].push({ title, intro, code: escapedCode, result, concepts: [['База', 'Понимаем назначение инструмента'], ['Практика', 'Повторяем приём в своём проекте'], ['Результат', 'Добавляем деталь на страницу']], challenge, challengeCode: escapedCode });
+		}
+		[
+			['Документ HTML', 'Разберись с doctype, html, head и body — это обязательная основа любого документа.', '<!doctype html>\n<html>\n  <head><title>Мой сайт</title></head>\n  <body>Контент</body>\n</html>', 'Создай минимальный HTML-документ.'],
+			['Заголовки', 'Используй h1–h6 по смыслу, а не только ради размера текста.', '<h1>Главная тема</h1>\n<h2>Раздел</h2>\n<h3>Подраздел</h3>', 'Сделай иерархию из трёх заголовков.'],
+			['Абзацы и переносы', 'Текст читается лучше, когда он разделён на логичные абзацы.', '<p>Первый абзац.</p>\n<p>Второй абзац.</p>\n<br>Новая строка', 'Раздели описание проекта на два абзаца.'],
+			['Ссылки-якоря', 'Якоря помогают быстро переходить к разделам одной страницы.', '<a href="#contacts">Контакты</a>\n<section id="contacts">Связаться</section>', 'Добавь ссылкой переход к блоку контактов.'],
+			['Навигация', 'Тег nav группирует основные ссылки сайта и делает меню понятным.', '<nav>\n  <a href="#about">Обо мне</a>\n  <a href="#work">Работы</a>\n</nav>', 'Собери меню из трёх ссылок.'],
+			['Описание страницы', 'Meta-теги помогают браузеру и поисковикам правильно понять страницу.', '<meta name="description" content="Портфолио веб-разработчика">\n<meta name="viewport" content="width=device-width">', 'Добавь описание своей страницы.'],
+			['Вложенные блоки', 'Вложенность показывает, какие элементы относятся к одной карточке или секции.', '<article>\n  <h2>Проект</h2>\n  <p>Описание проекта</p>\n</article>', 'Собери карточку проекта из article, h2 и p.'],
+			['Цитаты и выделения', 'blockquote и mark помогают выделить цитату или важную мысль.', '<blockquote>Делай маленький шаг каждый день.</blockquote>\n<p><mark>Важно:</mark> практика решает.</p>', 'Добавь цитату в свой сайт.'],
+			['Раскрывающийся блок', 'details и summary создают нативный аккордеон без JavaScript.', '<details>\n  <summary>Подробнее</summary>\n  Скрытый текст\n</details>', 'Спрячь дополнительные факты в details.'],
+			['Дата и адрес', 'Специальные теги делают контактную информацию понятной для браузера.', '<time datetime="2026-09-18">18 сентября 2026</time>\n<address>hello@example.com</address>', 'Добавь дату публикации проекта.'],
+			['Селекторы форм', 'Группируй поля формы в fieldset и добавляй легенду для контекста.', '<fieldset>\n  <legend>Контакты</legend>\n  <input type="email">\n</fieldset>', 'Собери группу полей для связи.'],
+			['Кнопки и действия', 'Выбирай button для действия, а ссылку a — для перехода на другую страницу.', '<button type="submit">Отправить</button>\n<a href="/about">О проекте</a>', 'Добавь кнопке понятный текст действия.'],
+			['HTML-финал', 'Проверь структуру, доступность и смысл тегов перед тем, как переходить к стилям.', '<header>...</header>\n<main>...</main>\n<footer>...</footer>', 'Собери чистый HTML-каркас главной страницы.']
+		].forEach(lesson => addExtraLesson('html', ...lesson));
+		[
+			['Сброс стилей', 'Начни проект с предсказуемых отступов и box-sizing.', '* {\n  box-sizing: border-box;\n  margin: 0;\n}', 'Добавь базовый CSS-сброс.'],
+			['HEX, RGB и HSL', 'Один цвет можно записать разными способами — выбирай формат, который удобнее читать.', '.title {\n  color: hsl(225 80% 53%);\n  background: rgb(240 107 61);\n}', 'Задай элементу цвет через HSL.'],
+			['Единицы измерения', 'px точен, rem зависит от шрифта, %, vw и vh помогают адаптивности.', '.hero {\n  min-height: 80vh;\n  padding: 2rem;\n}', 'Сделай секцию высотой 70vh.'],
+			['Порядок и каскад', 'CSS применяет правила по каскаду, специфичности и порядку объявления.', '.card { color: #777; }\n.card.featured { color: #2658e8; }', 'Сделай featured-карточку акцентной.'],
+			['Псевдоклассы', 'Стили могут зависеть от состояния: focus, checked, first-child и других.', 'input:focus {\n  outline: 3px solid #8eb85c;\n}\nli:first-child { font-weight: 700; }', 'Стилизуй поле при фокусе.'],
+			['Псевдоэлементы', '::before и ::after добавляют декоративные элементы без лишней разметки.', '.quote::before {\n  content: "\\201C";\n  color: #f06b3d;\n}', 'Добавь декоративную кавычку к цитате.'],
+			['Линейные градиенты', 'Градиент помогает создать выразительный фон, если использовать его аккуратно.', '.hero {\n  background: linear-gradient(120deg, #2658e8, #8eb85c);\n}', 'Сделай градиент для hero-секции.'],
+			['Картинка как фон', 'background-image и cover помогают красиво вписать изображение в блок.', '.cover {\n  background: url(photo.jpg) center / cover;\n  min-height: 280px;\n}', 'Сделай обложку с cover.'],
+			['Мобильное меню', 'На узком экране меняй сетку и размер текста через media-запрос.', '@media (max-width: 700px) {\n  .menu { flex-direction: column; }\n}', 'Сделай меню вертикальным на телефоне.'],
+			['CSS-финал', 'Собери визуальную систему: переменные, сетка, адаптивность, типографика и состояния.', ':root { --accent: #2658e8; }\n.page { max-width: 1100px; margin: auto; }\n.button:hover { transform: translateY(-2px); }', 'Оформи свой сайт как законченный продукт.']
+		].forEach(lesson => addExtraLesson('css', ...lesson));
+		[
+			['GUI 01: что такое интерфейс', 'GUI — это всё, с чем человек взаимодействует на экране: текст, кнопки, меню, поля и карточки.', '.screen {\n  display: flex;\n  gap: 24px;\n}', 'Собери экран из двух блоков и оставь между ними расстояние.'],
+			['GUI 02: читаемый текст', 'Иерархия текста помогает быстро понять страницу: заголовок, описание и небольшая подпись.', '.title { font-size: 32px; font-weight: 800; }\n.subtitle { font-size: 16px; line-height: 1.6; }', 'Создай заголовок, описание и подпись с разными размерами.'],
+			['GUI 03: хорошая кнопка', 'Кнопка должна быть заметной, понятной и показывать, что произойдёт после нажатия.', '.button {\n  padding: 12px 18px;\n  background: #2658e8;\n  color: white;\n  border: 0;\n}', 'Сделай синюю кнопку с белым текстом и внутренними отступами.'],
+			['GUI 04: вторичная кнопка', 'Не каждое действие главное. Вторичная кнопка должна быть спокойнее, но оставаться понятной.', '.button-secondary {\n  border: 1px solid #2658e8;\n  color: #2658e8;\n  background: transparent;\n}', 'Оформи кнопку «Отмена» как вторичную.'],
+			['GUI 05: карточка', 'Карточка объединяет связанный контент и создаёт визуальную границу между блоками.', '.card {\n  padding: 20px;\n  border: 1px solid #ddd;\n  border-radius: 12px;\n  background: white;\n}', 'Собери аккуратную карточку профиля.'],
+			['GUI 06: отступы и ритм', 'Одинаковые интервалы делают интерфейс спокойным и помогают глазу двигаться по странице.', '.stack {\n  display: grid;\n  gap: 16px;\n}', 'Задай одинаковый gap между элементами карточки.'],
+			['GUI 07: меню', 'Меню показывает, где пользователь находится и куда может перейти дальше.', '.nav {\n  display: flex;\n  align-items: center;\n  gap: 20px;\n}', 'Собери горизонтальное меню из трёх ссылок.'],
+			['GUI 08: поле ввода', 'Полю нужны подпись, понятный placeholder и заметное состояние фокуса.', '.input:focus {\n  border-color: #2658e8;\n  outline: 3px solid #2658e833;\n}', 'Оформи поле так, чтобы фокус был хорошо виден.'],
+			['GUI 09: состояния кнопки', 'Hover, focus и disabled объясняют пользователю, что элемент активен, выбран или недоступен.', '.button:hover { background: #1742bd; }\n.button:disabled { opacity: .5; }', 'Добавь кнопке hover и состояние disabled.'],
+			['GUI 10: бейдж и статус', 'Бейдж коротко сообщает статус: новый, готово, в работе или важно.', '.badge {\n  display: inline-flex;\n  padding: 5px 9px;\n  border-radius: 99px;\n  background: #dfe8d5;\n}', 'Создай зелёный бейдж «Готово».'],
+			['GUI 11: сетка карточек', 'Сетка помогает показать несколько объектов одинаково аккуратно и сравнимо.', '.cards {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n  gap: 20px;\n}', 'Сделай сетку из трёх карточек.'],
+			['GUI 12: адаптивный экран', 'На телефоне колонки должны складываться в один столбец, чтобы контент не стал слишком узким.', '@media (max-width: 700px) {\n  .cards { grid-template-columns: 1fr; }\n}', 'Сделай сетку одноколоночной на мобильном экране.'],
+			['GUI 13: модальное окно', 'Модальное окно фокусирует внимание на одном действии и затем возвращает пользователя на страницу.', '.modal {\n  max-width: 420px;\n  padding: 24px;\n  border-radius: 16px;\n  box-shadow: 0 20px 60px #0003;\n}', 'Оформи компактное окно подтверждения.'],
+			['GUI 14: визуальная система', 'Переменные объединяют интерфейс: один акцентный цвет, один радиус и единый ритм отступов.', ':root {\n  --accent: #2658e8;\n  --radius: 12px;\n  --space: 16px;\n}', 'Создай три переменные для своей темы.'],
+			['GUI 15: финальный дашборд', 'Собери цельный экран: шапка, меню, заголовок, карточки, статус и основная кнопка.', '.dashboard {\n  display: grid;\n  grid-template-columns: 240px 1fr;\n  gap: 24px;\n  min-height: 500px;\n}', 'Собери свой первый красивый интерфейс из всех изученных частей.']
+		].forEach(lesson => addExtraLesson('gui', ...lesson));
+		function getRequirements(lesson) {
+			const title = lesson.title.toLowerCase();
+			if (track === 'gui') {
+				if (title.includes('текст')) return ['font-size', 'font-weight'];
+				if (title.includes('кноп')) return ['padding', 'background'];
+				if (title.includes('карточ')) return ['padding', 'border'];
+				if (title.includes('отступ') || title.includes('ритм')) return ['gap'];
+				if (title.includes('меню')) return ['display', 'flex'];
+				if (title.includes('поле')) return [':focus'];
+				if (title.includes('состояни')) return [':hover'];
+				if (title.includes('бейдж')) return ['border-radius'];
+				if (title.includes('сетк')) return ['display', 'grid'];
+				if (title.includes('адаптив')) return ['@media'];
+				if (title.includes('модал')) return ['max-width', 'box-shadow'];
+				if (title.includes('систем')) return ['--', 'var('];
+				return ['display', 'gap'];
+			}
+			if (track === 'html') {
+				if (title.includes('документ')) return ['<!doctype', '<html', '<body'];
+				if (title.includes('заголов')) return ['<h'];
+				if (title.includes('абзац')) return ['<p>'];
+				if (title.includes('ссыл') || title.includes('навигац')) return ['<a', 'href'];
+				if (title.includes('спис')) return ['<ul', '<li'];
+				if (title.includes('форм') || title.includes('селектор')) return ['<input'];
+				if (title.includes('медиа')) return ['<img', 'alt'];
+				if (title.includes('таблиц')) return ['<table', '<tr'];
+				if (title.includes('каркас')) return ['<h2'];
+				if (title.includes('семантик') || title.includes('финал')) return ['<header', '<main'];
+				if (title.includes('вложен')) return ['<article', '<h2'];
+				if (title.includes('цитат')) return ['<blockquote', '<mark'];
+				if (title.includes('раскрыва')) return ['<details', '<summary'];
+				if (title.includes('дата')) return ['<time', '<address'];
+				return ['<', '>'];
+			}
+			if (title === 'цвет и шрифт') return ['color'];
+			if (title.includes('hex') || title.includes('градиент')) return ['color', 'background'];
+			if (title === 'отступы и рамки') return ['padding'];
+			if (title.includes('блочн')) return ['box-sizing'];
+			if (title.includes('сброс')) return ['box-sizing'];
+			if (title.includes('flex') || title.includes('мобильн')) return ['display', 'flex'];
+			if (title.includes('grid')) return ['display', 'grid'];
+			if (title.includes('адаптив')) return ['@media'];
+			if (title.includes('селектор') || title.includes('каскад')) return ['.', '{'];
+			if (title.includes('позициони')) return ['position', 'absolute'];
+			if (title.includes('hover') || title.includes('псевдокласс')) return [':hover'];
+			if (title.includes('псевдоэлемент')) return ['::before'];
+			if (title.includes('перемен') || title.includes('тёмн')) return ['--', 'var('];
+			if (title.includes('типограф')) return ['font-size', 'line-height'];
+			if (title.includes('тени')) return ['box-shadow'];
+			if (title.includes('картин')) return ['background', 'cover'];
+			if (title.includes('единиц')) return ['rem', 'vh'];
+			return ['{', '}'];
+		}
+		function validateSyntax(code) {
+			if (track === 'html') {
+				const commentStart = '<' + '!--';
+				const tagPattern = new RegExp(commentStart + '[\\s\\S]*?-->|<\\/?([a-z0-9]+)(?:\\s[^<>]*)?>', 'gi');
+				const voidTags = ['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source', 'track', 'wbr'];
+				const openTags = [];
+				let match;
+				while ((match = tagPattern.exec(code))) {
+					if (match[0].startsWith(commentStart) || voidTags.includes(match[1].toLowerCase()) || match[0].endsWith('/>')) continue;
+					if (match[0].startsWith('</')) {
+						if (openTags.pop() !== match[1].toLowerCase()) return `Проверь закрывающий тег </${match[1]}>.`;
+					} else {
+						openTags.push(match[1].toLowerCase());
+					}
+				}
+				if (openTags.length) return `Не закрыт тег <${openTags[openTags.length - 1]}>.`;
+				return '';
+			}
+			const cssWithoutComments = code.replace(/\/\*[\s\S]*?\*\//g, '');
+			const braces = (cssWithoutComments.match(/{/g) || []).length - (cssWithoutComments.match(/}/g) || []).length;
+			const parentheses = (cssWithoutComments.match(/\(/g) || []).length - (cssWithoutComments.match(/\)/g) || []).length;
+			const quoteMatches = cssWithoutComments.match(/["']/g) || [];
+			if (braces !== 0) return braces > 0 ? 'Не хватает закрывающей фигурной скобки }.' : 'Лишняя закрывающая фигурная скобка }.';
+			if (parentheses !== 0) return 'Проверь круглые скобки в CSS.';
+			if (quoteMatches.length % 2) return 'Проверь кавычки в значении CSS.';
+			return '';
+		}
+		function checkAnswer() {
+			try {
+				const answer = $('answerInput').value.trim().toLowerCase().replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/\s+/g, ' ');
+				const requirements = getRequirements(tracks[track][lessonIndex]);
+				const missing = requirements.filter(requirement => !answer.includes(requirement));
+				$('checkFeedback').classList.remove('error', 'success');
+				if (answer.length < 8) {
+					$('checkFeedback').textContent = 'Напиши немного кода, затем проверь его.';
+					$('checkFeedback').classList.add('error');
+					return;
+				}
+				const syntaxError = validateSyntax(answer);
+				if (syntaxError) {
+					$('checkFeedback').textContent = `Ошибка в коде: ${syntaxError}`;
+					$('checkFeedback').classList.add('error');
+					return;
+				}
+				if (missing.length) {
+					$('checkFeedback').textContent = `Почти. Проверь, что в решении есть: ${missing.join(', ')}`;
+					$('checkFeedback').classList.add('error');
+					return;
+				}
+				$('checkFeedback').textContent = 'Правильно! Ошибок синтаксиса нет, задание выполнено.';
+				$('checkFeedback').classList.add('success');
+			} catch (error) {
+				$('checkFeedback').textContent = 'Не удалось проверить код. Проверь скобки, кавычки и попробуй ещё раз.';
+				$('checkFeedback').classList.add('error');
+			}
+		}
+		function showHint() {
+			const requirements = getRequirements(tracks[track][lessonIndex]);
+			$('hintText').textContent = `Подсказка: используй изученные конструкции ${requirements.join(' и ')}. Не копируй готовый ответ — собери свой вариант.`;
+			$('hintText').classList.toggle('visible');
+		}
+		let track = 'html', lessonIndex = 0;
+		const $ = id => document.getElementById(id);
+		function renderLessons(filter = '') { $('lessonList').innerHTML = tracks[track].map((lesson, index) => ({ lesson, index })).filter(x => x.lesson.title.toLowerCase().includes(filter.toLowerCase())).map(x => `<button class="lesson ${x.index === lessonIndex ? 'selected' : ''}" data-index="${x.index}"><span class="lesson-num">${String(x.index + 1).padStart(2, '0')}</span>${x.lesson.title}</button>`).join(''); document.querySelectorAll('.lesson').forEach(button => button.onclick = () => { lessonIndex = Number(button.dataset.index); render(); }); }
+		function render() { const lesson = tracks[track][lessonIndex]; const totalLessons = tracks[track].length; const trackLabel = track === 'html' ? 'ОСНОВЫ' : track === 'css' ? 'СТИЛИЗАЦИЯ' : 'ИНТЕРФЕЙСЫ'; $('lessonTrack').textContent = `${track.toUpperCase()} · ${trackLabel}`; $('lessonCount').textContent = `УРОК ${String(lessonIndex + 1).padStart(2, '0')} / ${String(totalLessons).padStart(2, '0')}`; $('paneTitle').textContent = track === 'html' ? 'код · index.html' : track === 'css' ? 'код · style.css' : 'код · interface.css'; $('lessonTitle').textContent = lesson.title; $('lessonIntro').textContent = lesson.intro; $('codeBlock').innerHTML = lesson.code; $('resultBlock').innerHTML = lesson.result; $('concepts').innerHTML = lesson.concepts.map(item => `<div class="concept"><strong>${item[0]}</strong><span>${item[1]}</span></div>`).join(''); $('challengeText').textContent = lesson.challenge; $('answerInput').value = ''; $('hintText').textContent = ''; $('hintText').classList.remove('visible'); $('checkFeedback').textContent = ''; $('checkFeedback').classList.remove('error', 'success'); renderLessons($('search').value); }
+		document.querySelectorAll('[data-track]').forEach(button => button.onclick = () => { track = button.dataset.track; lessonIndex = 0; document.querySelectorAll('[data-track]').forEach(item => item.classList.toggle('active', item === button)); render(); });
+		$('search').oninput = event => renderLessons(event.target.value);
+		$('nextBtn').onclick = () => { lessonIndex = (lessonIndex + 1) % tracks[track].length; render(); };
+		$('checkBtn').onclick = checkAnswer;
+		$('helpBtn').onclick = showHint;
+		render();
+	</script>
+</body>
+</html>
